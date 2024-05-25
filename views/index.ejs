@@ -49,11 +49,13 @@
                                 </button>
                             </form>
                             <div>
-                                <select id="basic-select" class="mt-1 block w-full py-2 px-3 border border-gray-300 bg-white rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm">
-                                    <option>Pending</option>
-                                    <option>In-Progress</option>
-                                    <option>Completed</option>
-                                </select>
+                                <form method="POST" action="/tasks/<%= list.id %>?_method=PUT">
+                                    <select id="basic-select" class="mt-1 block w-full py-2 px-3 border border-gray-300 bg-white rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm">
+                                        <option value="Pending">Pending</option>
+                                        <option value="In-Progress">In-Progress</option>
+                                        <option value="Completed">Completed</option>
+                                    </select>
+                                </form>
                             </div>
                         </div>
                     </div>

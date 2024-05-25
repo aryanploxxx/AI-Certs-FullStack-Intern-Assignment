@@ -98,14 +98,20 @@ app.post('/tasks', (req, res) => {
         }
         // console.log(newTask)
         tasks.push(newTask)
-        res.status(500).render('index', {tasks: tasks})
+        res.status(200).render('index', {tasks: tasks})
     } catch(err) {
-
+        console.log(`Error: ${err}`)
+        res.status(500).json({error: err})
     }
 })
 
 app.get('/tasks/:id', (req, res) => {
-    
+    const index = tasks.findIndex(t => t.id === (req.params.id));
+    if (index > -1) {
+        res.json(tasks[index]);
+    } else {
+        res.status(404).send('Task not found');
+    }
 })
 
 app.post('/tasks', (req, res) => {

@@ -146,7 +146,18 @@ app.put('/tasks/:id', (req, res) => {
 })
 
 app.delete('/tasks/:id', (req, res) => {
-    
+    try {
+        const index = tasks.findIndex(t => t.id === (req.params.id));
+        if (index > -1) {
+            tasks.splice(index, 1);
+            res.status(200).render('index', {tasks: tasks});
+        } else {
+            res.status(404).json('Task not found');
+        }
+    } catch(err) {
+        console.log(`Error: ${err}`)
+        res.status(500).json({error: err})
+    }
 })
 
 // app.put("/update/:id",async (req,res)=> {

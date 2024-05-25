@@ -72,37 +72,8 @@ app.get('/', (req, res) => {
     res.render('index', {tasks: tasks})
 })
 
-app.post('/tasks', (req, res) => {
-    try {
-        const {title, description} = req.body
-        let currentDate = new Date();
-        let formattedCurrentDate = currentDate.toLocaleString();
-        currentDate.setDate(currentDate.getDate() + 1);
-        let calcDueDate = currentDate.toLocaleString('en-US', {
-            weekday: 'long',
-            year: 'numeric',
-            month: 'long',
-            day: 'numeric',
-            hour: 'numeric',
-            minute: 'numeric',
-            hour12: true
-        });
-
-        const newTask = {
-            "id": uuidv4(),
-            "title": title,
-            "description": description,
-            "status": "Pending",
-            "due_date": calcDueDate,
-            "backgroundColor": generatebackgroundColor()
-        }
-        // console.log(newTask)
-        tasks.push(newTask)
-        res.status(200).render('index', {tasks: tasks})
-    } catch(err) {
-        console.log(`Error: ${err}`)
-        res.status(500).json({error: err})
-    }
+app.get('/tasks', (req, res) => {
+    res.json({tasks: tasks})
 })
 
 app.get('/tasks/:id', (req, res) => {
@@ -115,11 +86,63 @@ app.get('/tasks/:id', (req, res) => {
 })
 
 app.post('/tasks', (req, res) => {
-    
+    try {
+        const {title, description} = req.body
+        
+        if(!title || !description) {
+            res.status(200).render('index', {tasks: tasks})
+        } else {
+            let currentDate = new Date();
+            let formattedCurrentDate = currentDate.toLocaleString();
+            currentDate.setDate(currentDate.getDate() + 1);
+            let calcDueDate = currentDate.toLocaleString('en-US', {
+                weekday: 'long',
+                year: 'numeric',
+                month: 'long',
+                day: 'numeric',
+                hour: 'numeric',
+                minute: 'numeric',
+                hour12: true
+            });
+
+            const newTask = {
+                "id": uuidv4(),
+                "title": title,
+                "description": description,
+                "status": "Pending",
+                "due_date": calcDueDate,
+                "backgroundColor": generatebackgroundColor()
+            }
+            // console.log(newTask)
+            tasks.push(newTask)
+        }        
+        res.status(200).render('index', {tasks: tasks})
+    } catch(err) {
+        console.log(`Error: ${err}`)
+        res.status(500).json({error: err})
+    }
+})
+
+app.put('/update/:id', (req, res) => {
+    const index = tasks.findIndex(t => t.id === (req.params.id))
+    res.render('update', {task: tasks[index]})
 })
 
 app.put('/tasks/:id', (req, res) => {
-    
+    try {
+        const index = tasks.findIndex(t => t.id === (req.params.id))
+        const {title, description} = req.body 
+        if (index > -1) {
+            tasks[index].title = title
+            tasks[index].description = description
+        } else {
+            res.status(404).send('Task not found')
+        }
+        res.render('index', {tasks: tasks})
+    } catch(err) {
+        console.log(`Error: ${err}`)
+        res.status(500).json({error: err})
+    }
 })
 
 app.delete('/tasks/:id', (req, res) => {
@@ -147,7 +170,7 @@ app.listen(port, ()=> {
 
 liveReloadServer.server.once('connection', () => {
     setTimeout(() => {
-      liveReloadServer.refresh('/');
+        liveReloadServer.refresh('/');
     }, 100);
-  });
+});
   
